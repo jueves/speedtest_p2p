@@ -2,9 +2,15 @@ import sys
 import datetime
 import requests
 
+# Gets a csv line from Ookla's Speedtest through a Bash pipe.
+# Returns the same line adding atributes for current time and
+# Transmission p2p app status.
+
 transmission_url = "https://server:port/transmission/web/index.html"
 
 def isTransmissionUp():
+  # Checks if Transmission web interface is up.
+  # Uses try to avoid error prompt when port is closed.
   try:
     page = requests.get(transmission_url)
     if (page.status_code == 200):
@@ -17,12 +23,14 @@ def isTransmissionUp():
   
   return(transmission_running)
 
-def addAtributes(speedtest_line):
+def addAtributes(csv_line):
+  # Takes a csv line and adds new atributes for time and p2p status.
   current_time_str = str(datetime.datetime.today())
-  lineacompleta = speedtest_line + ", \"" + current_time_str + "\", \"" + isTransmissionUp() + "\""
+  lineacompleta = csv_line + ", \"" + current_time_str + "\", \"" + isTransmissionUp() + "\""
   return(lineacompleta)
 
-# Use "try" to avoid irrelevant socket error from going into the output text.
+# Get Speedtest csv line from standard input.
+# Uses "try" to avoid irrelevant socket error from going into the output text.
 try:
   original_row = sys.stdin.readline()
 except:
