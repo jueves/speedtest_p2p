@@ -2,6 +2,5 @@ This project uses data collected with [Ookla's Speedtest](https://www.speedtest.
 
 As most data was collected before developing this project, there is also a Python script to generate dummy dates and p2p statuses, while also replacing sensitive data about used servers.
 
-# To do
-- [ ] R Notebook.
+You can see data exploration [here](https://github.com/jueves/speedtest_p2p/blob/master/speedtest.md).
 
