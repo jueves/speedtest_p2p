@@ -54,7 +54,3 @@ data %>%
   gather(key="type", value="speed", c('download', 'upload')) %>%
   mutate(type=str_c(type, p2p, sep="_p2p")) %>%
   ggplot(aes(speed, color=type)) + geom_boxplot(orientation="y")
-
-
-minidata <- data[1:20, 1:ncol(data)]
-gather(minidata, key="type", value="speed", c('download', 'upload'))
