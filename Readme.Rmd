@@ -1,7 +1,5 @@
 ---
 title: "Network speed exploration"
-author: "Jueves"
-date: '2022-09-27'
 output: github_document
 ---
 
@@ -15,7 +13,8 @@ knitr::opts_chunk$set(echo = TRUE)
 data <- read_csv("speedtest_dummy.csv")
 ```
 
-This notebook explores data collected every 10 minutes with Ookla's Speedtest. Although the code in this repository allows to improve Ookla's data with date/time and p2p status -if the p2p application in the local network is running or not- available data lacks these two variables.
+This project explores data collected every 10 minutes using [Ookla's Speedtest](https://www.speedtest.net/).  
+Although the code in this repository allows to improve Ookla's data with date/time and p2p status -this means if the p2p application in the local network is running or not- available data lacks these two variables.
 
 For the purpose of developing this notebook, start date and time have been chosen for the first observation, asigning date/time values for the rest of the data with a 10min delay between one observation and the next. Values for p2p status have been randomly generated.
 
