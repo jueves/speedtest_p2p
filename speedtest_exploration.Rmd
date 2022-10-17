@@ -1,0 +1,79 @@
+---
+title: "Network speed exploration"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(lubridate)
+
+knitr::opts_chunk$set(echo = TRUE)
+
+data <- read_csv("speedtest_dummy.csv")
+```
+
+This project explores data collected every 10 minutes using [Ookla's Speedtest](https://www.speedtest.net/).  
+Although the code in this repository allows to improve Ookla's data with date/time and p2p status -this means if the p2p application in the local network is running or not- available data lacks these two variables.
+
+For the purpose of developing this notebook, start date and time have been chosen for the first observation, asigning date/time values for the rest of the data with a 10min delay between one observation and the next. Values for p2p status have been randomly generated.
+
+## Speed
+Here we can see the whole speed data along the whole period. It is interesting to note that there is not much variability and also that larger outliers occur in the range bewteen upload and download averages.
+
+```{r speed, echo=FALSE, message=FALSE}
+data %>%
+  mutate(download=download/1024, upload=upload/1024) %>%
+  gather(key="type", value="speed", c('download', 'upload')) %>%
+  ggplot(aes(time, speed, color=type)) + geom_line()
+```
+
+## p2p status
+We can split this data on the status (running or not running) of a p2p application in the local network. In this case we are using random generated statuses, but real patterns could be spotted on real data.
+
+```{r speed_p2p, echo=FALSE, message=FALSE}
+data %>%
+  mutate(download=download/1024, upload=upload/1024) %>%
+  gather(key="type", value="speed", c('download', 'upload')) %>%
+  mutate(type=str_c(type, p2p, sep="_p2p")) %>%
+  ggplot(aes(time, speed, color=type)) + geom_line()
+```
+
+# Daily means
+If we average the data daily, we can see how outliers are smoothed, showing there were no days with a clearly different speed.
+
+```{r daily_means, echo=FALSE, message=FALSE}
+data %>%
+  mutate(date=as.Date(time), download=download/1024, upload=upload/1024) %>%
+  gather(key="type", value="speed", c('download', 'upload')) %>%
+  group_by(date, type) %>%
+  summarise(date, type, speed=mean(speed)) %>%
+  distinct() %>%
+  ggplot(aes(date, speed, color=type)) + geom_line()
+```
+
+# Hourly means
+Here we plot data hourly, showing no clear time at which speed consistently changes.
+
+```{r, hourly_means, echo=FALSE, message=FALSE}
+data %>%
+  mutate(hour=hour(time), download=download/1024, upload=upload/1024) %>%
+  gather(key="type", value="speed", c('download', 'upload')) %>%
+  group_by(hour, type) %>%
+  summarise(hour, type, speed=mean(speed)) %>%
+  distinct() %>%
+  ggplot(aes(hour, speed, color=type)) + geom_line()
+```
+
+# Hourly means with p2p status
+Split hourly data by p2p status. Here again, we may see some difference if p2p data were not randomly generated.
+
+```{r, hourly_p2p, echo=FALSE, message=FALSE}
+data %>%
+  mutate(hour=hour(time), download=download/1024, upload=upload/1024) %>%
+  gather(key="type", value="speed", c('download', 'upload')) %>%
+  mutate(type=str_c(type, p2p, sep="_p2p")) %>%
+  group_by(hour, type) %>%
+  summarise(hour, type, speed=mean(speed)) %>%
+  ggplot(aes(hour,speed, color=type)) + geom_line()
+```
